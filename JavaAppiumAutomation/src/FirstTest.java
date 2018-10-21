@@ -5,12 +5,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FirstTest {
 
@@ -141,12 +144,51 @@ public class FirstTest {
         }
 
 
+        @Test
+        public void ex3SearchCancel(){
+
+            waitForElemenAndClick(
+                    By.id("org.wikipedia:id/search_container"),
+                    "No web element search field",
+                    5);
+
+            waitForElementAndSendKeys(
+                    By.id("org.wikipedia:id/search_src_text"),
+                    "Test",
+                    "No Search field to type a value to search",
+                    5);
+
+            Assert.assertTrue("There is 1 or 0 articles regarding search value!", waitForElementPresentAndSaveToList(
+                   By.id("org.wikipedia:id/page_list_item_title"),
+                           "No articles corresponded to search!",
+                    10).size()>1);
+
+            waitForElemenAndClick(
+                    By.id("org.wikipedia:id/search_close_btn"),
+                    "No Close Button",
+                    5
+            );
+
+            WebElement searchField_element = waitForElementPresent(
+                    By.xpath("//*[contains(@text, 'Search…')]"),
+                    "No 'Java programming language' article",
+                    15);
+
+            String searchField_placeholder = searchField_element.getAttribute("text");
+            Assert.assertEquals(
+                    "Search is not canceled",
+                    "Search…",
+                    searchField_placeholder);
+
+        }
+
+
 
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds){
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
         wait.withMessage(error_message + "\n");
-        return  wait.until(ExpectedConditions.presenceOfElementLocated(by));
+        return wait.until(ExpectedConditions.presenceOfElementLocated(by));
 
     }
 
@@ -180,6 +222,12 @@ public class FirstTest {
         WebElement element =  waitForElementPresent(by, error_message, timeoutInSeconds);
         element.clear();
         return element;
+    }
+
+    private List<WebElement> waitForElementPresentAndSaveToList(By by, String error_message, long timeoutInSeconds){
+        waitForElementPresent(by, error_message, timeoutInSeconds);
+        List list = driver.findElements(by);
+        return list;
     }
 
 
