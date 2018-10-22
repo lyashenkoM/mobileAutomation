@@ -5,14 +5,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FirstTest {
@@ -183,6 +181,31 @@ public class FirstTest {
         }
 
 
+    @Test
+    public void ex4CheckWordInSearchResult(){
+
+        waitForElemenAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "No web element search field",
+                5);
+
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Test",
+                "No Search field to type a value to search",
+                5);
+
+        List list = waitForElementPresentAndSaveToList(
+                By.id("org.wikipedia:id/page_list_item_title"),
+                "No articles corresponded to search!",
+                10);
+
+        Assert.assertTrue("No all search result elements contain 'Text'", checkWordInSearch(list, "Test"));
+
+    }
+
+
+
 
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds){
@@ -226,10 +249,17 @@ public class FirstTest {
 
     private List<WebElement> waitForElementPresentAndSaveToList(By by, String error_message, long timeoutInSeconds){
         waitForElementPresent(by, error_message, timeoutInSeconds);
-        List list = driver.findElements(by);
+        List<WebElement>  list = driver.findElements(by);
         return list;
     }
 
-
-
+    private boolean checkWordInSearch(List<WebElement>  list, String text) {
+        boolean checkResult = true;
+        for (int i = 0; i < list.size(); i++) {
+            if (!list.get(i).getAttribute("text").contains(text)) {
+                checkResult = false;
+            }
+        }
+        return checkResult;
+    }
 }
