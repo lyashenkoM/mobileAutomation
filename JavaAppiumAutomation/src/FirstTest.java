@@ -204,6 +204,7 @@ public class FirstTest {
 
         Assert.assertTrue("No all search result elements contain 'Text'", checkWordInSearch(list, "Test"));
 
+
     }
 
 
@@ -400,7 +401,7 @@ public class FirstTest {
                 "Article title have been changed after screen rotation",
                 title_before_rotation,
                 title_after_rotation
-                );
+        );
 
         driver.rotate(ScreenOrientation.PORTRAIT);
         String title_after_second_rotation = waitForElementAndGetAttribute(
@@ -417,7 +418,7 @@ public class FirstTest {
     }
 
     @Test
-    public void testCheckSearchArticleInBackground(){
+    public void testCheckSearchArticleInBackground() {
         waitForElemenAndClick(By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
                 "Can not find Search Wikipedia input",
                 5);
@@ -497,11 +498,22 @@ public class FirstTest {
 
     private boolean checkWordInSearch(List<WebElement> list, String text) {
         boolean checkResult = true;
+        String inLowerCase = text.toLowerCase();
         for (int i = 0; i < list.size(); i++) {
-            if (!list.get(i).getAttribute("text").contains(text)) {
+            if (!list.get(i).getAttribute("text").toLowerCase().contains(inLowerCase)) {
                 checkResult = false;
+                break;
             }
         }
+
+//        for (WebElement element : list) {
+//            if (!element.getAttribute("text").toLowerCase().contains(inLowerCase)) {
+//                checkResult = false;
+//
+//                break;
+//            }
+//        }
+
         return checkResult;
     }
 
