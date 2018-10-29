@@ -444,6 +444,126 @@ public class FirstTest {
 
     }
 
+    @Test
+    public void testToSave2Articles(){
+        waitForElemenAndClick(By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+                "Can not find Search Wikipedia input",
+                5);
+        String search_line = "software testing";
+        waitForElementAndSendKeys(By.xpath("//*[contains(@text, 'Search…')]"),
+                search_line,
+                "Can not find search input",
+                5);
+
+        waitForElemenAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Software testing']"),
+                "Can not find 'Software testing', searching by " + search_line ,
+                15);
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "No 'Software testing' article",
+                15);
+
+        waitForElemenAndClick(
+                By.xpath("//android.widget.ImageView[@content-desc='More options']"),//by class //
+                "Cannot find button to open article options",
+                5);
+
+        waitForElemenAndClick(By.xpath("//*[@text='Add to reading list']"),
+                "Can not find option to add article to reading list",
+                10);
+
+        waitForElemenAndClick(
+                By.id("org.wikipedia:id/onboarding_button"),
+                "Can not find 'Got it' button",
+                15);
+        waitForElementAndClear(
+                By.id("org.wikipedia:id/text_input"),
+                "Cannot find 'Name for reading list' field ",
+                5);
+        String folder_name = "Folder 1";
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/text_input"),
+                folder_name,
+                "Cannot sendkeys to 'Name for reading list'",
+                5);
+
+        waitForElemenAndClick(
+                By.xpath("//*[@text='OK']"),
+                "Can not find OK button",
+        5);
+
+        waitForElemenAndClick(
+                By.id("org.wikipedia:id/menu_page_search"),
+                "Cannot find Search icon to continue search!",
+                5);
+        waitForElemenAndClick(
+                By.xpath("//*[@text='software testing']"),
+                "Cannot find recent search" + search_line,
+                15);
+
+        waitForElemenAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Software testing tactics']"),
+                "Can not find 'Software testing tactics', searching by " + search_line ,
+                15);
+
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "No 'Software testing tactics' article",
+                15);
+
+        waitForElemenAndClick(
+                By.xpath("//android.widget.ImageView[@content-desc='More options']"),//by class //
+                "Cannot find button to open article options",
+                5);
+
+        waitForElemenAndClick(By.xpath("//*[@text='Add to reading list']"),
+                "Can not find option to add article to reading list",
+                10);
+        waitForElemenAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/item_container']//*[@text='" + folder_name + "']"),
+                "Can not find '" +folder_name +" folder",
+                15);
+        waitForElemenAndClick(
+        By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
+                "Cannot find X button",
+                5);
+
+        waitForElemenAndClick(
+                By.xpath("//android.widget.FrameLayout[@content-desc='My lists']"),
+                "Cannot find X button",
+                5);
+
+        waitForElemenAndClick(
+                By.id("org.wikipedia:id/item_title"),
+                "Can not find '" +folder_name+ "' folder",
+                15);
+        waitForElementPresent(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Software testing']"),
+                "Can not find 'Software testing' article",
+                15);
+        swipeElementToLeft(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Software testing']"),
+                "Can not remove 'Software testing' article");
+
+        assertElementIsPresent(
+                By.id("org.wikipedia:id/page_list_item_title"),
+                "No articles on the page");
+
+        waitForElemenAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Software testing tactics']"),
+                "Can not open 'Software testing tactics' article)",
+                15);
+        String article_title= waitForElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "No 'Software testing tactics' article",
+                5).getAttribute("text");
+
+        Assert.assertEquals("Article 'Software testing tactics' not found", "Software testing tactics", article_title);
+    }
+
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
@@ -578,6 +698,17 @@ public class FirstTest {
         }
 
     }
+
+    private void assertElementIsPresent(By by, String error_message) {
+        int amount_of_elements = getAmountOfElements(by);
+        if (amount_of_elements < 0) {
+            String default_message = "An element '" + by.toString() + "' is not present";
+            throw new AssertionError(default_message + "" + error_message);
+        }
+
+    }
+
+
 
     private String waitForElementAndGetAttribute(By by, String attribute, String error_message, long timeOutInSeconds) {
 
