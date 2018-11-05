@@ -85,5 +85,19 @@ public class SearchPageObject extends MainPageObject {
                 "We supposed not to find any results!");
     }
 
+    public void assertSomeArticlesFoundAsResultOfSearch (){
+        this.assertSomeElementsPresent(By.xpath(SEARCH_RESULT_ELEMENT), "There are 1 or 0 articles found according to search result!");
+
+
+    }
+
+    public void assertSearchIsCanceled(){
+        this.assertElementPresent(By.xpath(SEARCH_INIT_ELEMENT), "The search is not canceled!");
+    }
+
+
+
+
+
 
 }

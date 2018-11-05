@@ -4,6 +4,8 @@ import lib.CoreTestCase;
 import lib.ui.SearchPageObject;
 import org.junit.Assert;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 public class SearchTests extends CoreTestCase {
 
@@ -29,7 +31,6 @@ public class SearchTests extends CoreTestCase {
     }
 
 
-
     @Test
     public void testAmountOfNotEmptySearch() {
         SearchPageObject SearchPageObject = new SearchPageObject(driver);
@@ -37,7 +38,7 @@ public class SearchTests extends CoreTestCase {
         String search_line = "Linkin Park discography";
         SearchPageObject.typeSearchLine(search_line);
         int amount_of_search_results = SearchPageObject.getAmountOfFoundArticles();
-        Assert.assertTrue("We found too few results!", amount_of_search_results>0);
+        Assert.assertTrue("We found too few results!", amount_of_search_results > 0);
 
     }
 
@@ -51,6 +52,19 @@ public class SearchTests extends CoreTestCase {
         SearchPageObject.assertThereIsNoResultOfSearch();
     }
 
+    @Test
+    public void testEx3SearchCancel() {
+
+
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
+        String search_line = "Test";
+        SearchPageObject.typeSearchLine(search_line);
+        SearchPageObject.assertSomeArticlesFoundAsResultOfSearch();
+        SearchPageObject.clickCancelSearch();
+        SearchPageObject.assertSearchIsCanceled();
+
+    }
 
 
 }
