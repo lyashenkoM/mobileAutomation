@@ -166,7 +166,7 @@ public class MainPageObject {
     public void assertSomeElementsPresent(By by, String error_message) {
         int amount_of_elements = getAmountOfElements(by);
         if (amount_of_elements >= 1) {
-            String default_message = "An element '" + by.toString() + "' is not present";
+            String default_message = "An element '" + by.toString() + "' is not present!";
             throw new AssertionError(default_message + "  " + error_message);
 
         }

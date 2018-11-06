@@ -11,7 +11,8 @@ public class SearchPageObject extends MainPageObject {
             SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{SUBSTRING}']",
             SEARCH_CANCEL_BUTTON = "org.wikipedia:id/search_close_btn",
             SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/search_results_list']/*[@resource-id='org.wikipedia:id/page_list_item_container']",
-            SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']";
+            SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']",
+            SEARCH_RECENT_VALUE_TPL = "//*[@text='{SUBSTRING}']";
 
 
     public SearchPageObject(AppiumDriver driver) {
@@ -23,6 +24,11 @@ public class SearchPageObject extends MainPageObject {
     private static String getResultSearchElement(String substring) {
         return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", substring);
     }
+
+    private static String getRecentSearch(String substring) {
+        return SEARCH_RECENT_VALUE_TPL.replace("{SUBSTRING}", substring);
+    }
+
 
     /* Templates methods */
 
@@ -80,23 +86,28 @@ public class SearchPageObject extends MainPageObject {
                 15);
     }
 
-    public void assertThereIsNoResultOfSearch (){
+    public void assertThereIsNoResultOfSearch() {
         this.assertElementNotPresent(By.xpath(SEARCH_RESULT_ELEMENT),
                 "We supposed not to find any results!");
     }
 
-    public void assertSomeArticlesFoundAsResultOfSearch (){
+    public void assertSomeArticlesFoundAsResultOfSearch() {
         this.assertSomeElementsPresent(By.xpath(SEARCH_RESULT_ELEMENT), "There are 1 or 0 articles found according to search result!");
 
 
     }
 
-    public void assertSearchIsCanceled(){
+    public void assertSearchIsCanceled() {
         this.assertElementPresent(By.xpath(SEARCH_INIT_ELEMENT), "The search is not canceled!");
     }
 
-
-
+    public void clickRecentSearch(String substring) {
+        String recent_search_xpath = getRecentSearch(substring);
+        this.waitForElemenAndClick(
+                By.xpath(recent_search_xpath),
+                "Cannot find recent search",
+                15);
+    }
 
 
 

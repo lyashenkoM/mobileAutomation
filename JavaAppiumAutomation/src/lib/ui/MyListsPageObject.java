@@ -6,28 +6,26 @@ import org.openqa.selenium.By;
 public class MyListsPageObject extends  MainPageObject {
 
     private static final String
-    FOLDER_BY_NAME_TPL = "//*[@text='{FOLDER_NAME}']",
-    ARTICLE_BY_TITLE_TPL = "//*[@text='{TITLE}']";
+            FOLDER_BY_NAME_TPL = "//*[@text='{FOLDER_NAME}']",
+            ARTICLE_BY_TITLE_TPL = "//*[@text='{TITLE}']";
 
-    private static String getFolderXpathByName (String name_of_folder)
-    {
-         return FOLDER_BY_NAME_TPL.replace("{FOLDER_NAME}", name_of_folder);
+    private static String getFolderXpathByName(String name_of_folder) {
+        return FOLDER_BY_NAME_TPL.replace("{FOLDER_NAME}", name_of_folder);
     }
 
-    private static String getSavedArticleXpathByTitle (String article_title)
-    {
+    private static String getSavedArticleXpathByTitle(String article_title) {
         return ARTICLE_BY_TITLE_TPL.replace("{TITLE}", article_title);
     }
 
-    public MyListsPageObject(AppiumDriver driver){
+    public MyListsPageObject(AppiumDriver driver) {
         super(driver);
     }
 
-    public void openFolderByName (String name_of_folder){
+    public void openFolderByName(String name_of_folder) {
         String folder_name_xpath = getFolderXpathByName(name_of_folder);
         this.waitForElemenAndClick(
                 By.xpath(folder_name_xpath),
-                "Can not find folder by name" + name_of_folder,
+                "Can not find folder by name " + name_of_folder,
                 10);
 
     }
@@ -42,7 +40,7 @@ public class MyListsPageObject extends  MainPageObject {
                 15);
     }
 
-    public void waitForArticleToDisappearByTitle(String article_title){
+    public void waitForArticleToDisappearByTitle(String article_title) {
         String article_xpath = getFolderXpathByName(article_title);
 
         this.waitForElementNotPresent(
@@ -50,15 +48,29 @@ public class MyListsPageObject extends  MainPageObject {
                 "Can not deleted saved article" + article_title,
                 15);
     }
-    public void swipeByArticleToDelete (String article_title){
+
+    public void swipeByArticleToDelete(String article_title) {
         this.waitForArticleToAppearByTitle(article_title);
-        String article_xpath = getFolderXpathByName(article_title);
+        String article_xpath = getSavedArticleXpathByTitle(article_title);
         this.swipeElementToLeft(
                 By.xpath(article_xpath),
-                "Cannot find saved article "+article_title);
+                "Cannot find saved article " + article_title);
 
         this.waitForArticleToDisappearByTitle(article_title);
 
 
     }
+
+    public void assertFolderContainsArticle(String article_title) {
+        String article_title_xpath = getSavedArticleXpathByTitle(article_title);
+        this.assertElementPresent(By.xpath(article_title_xpath), "There are no saved articles in the folder");
+
+    }
+
+    public void clickSavedArticle (String article_title){
+        String article_title_xpath = getSavedArticleXpathByTitle(article_title);
+        this.waitForElemenAndClick(By.xpath(article_title_xpath), "It is impossible to find saved in folder article to click it", 10);
+
+    }
+
 }
