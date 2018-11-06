@@ -12,7 +12,8 @@ public class SearchPageObject extends MainPageObject {
             SEARCH_CANCEL_BUTTON = "org.wikipedia:id/search_close_btn",
             SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/search_results_list']/*[@resource-id='org.wikipedia:id/page_list_item_container']",
             SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']",
-            SEARCH_RECENT_VALUE_TPL = "//*[@text='{SUBSTRING}']";
+            SEARCH_RECENT_VALUE_TPL = "//*[@text='{SUBSTRING}']",
+            SEARCH_RESULT_BY_TITLE_AND_DESCRIPTION = "//android.widget.LinearLayout[android.widget.TextView[@text='{SUBSTRING1}']][android.widget.TextView[@text='{SUBSTRING2}']]";
 
 
     public SearchPageObject(AppiumDriver driver) {
@@ -27,6 +28,11 @@ public class SearchPageObject extends MainPageObject {
 
     private static String getRecentSearch(String substring) {
         return SEARCH_RECENT_VALUE_TPL.replace("{SUBSTRING}", substring);
+    }
+
+    private static String getResultSearchElementByTitleAndSubtitle(String substring1, String substring2) {
+        return SEARCH_RESULT_BY_TITLE_AND_DESCRIPTION.replace("{SUBSTRING1}", substring1).replace("{SUBSTRING2}", substring2);
+
     }
 
 
@@ -62,6 +68,7 @@ public class SearchPageObject extends MainPageObject {
         String search_result_xpath = getResultSearchElement(substring);
         this.waitForElementPresent(By.xpath(search_result_xpath), "Cannot find search result with substring" + substring, 5);
     }
+
 
     public void clickByArticleWithSubstring(String substring) {
         String search_result_xpath = getResultSearchElement(substring);
@@ -108,6 +115,14 @@ public class SearchPageObject extends MainPageObject {
                 "Cannot find recent search",
                 15);
     }
+
+public void assertElementByTitleAndDescriptionIsDisplayed (String title, String description){
+    String search_result_xpath = getResultSearchElementByTitleAndSubtitle(title, description);
+    this.waitForElementPresent(By.xpath(search_result_xpath), "Element by title " + title + " and description " +description +" is not displayed!", 10);
+
+
+}
+
 
 
 

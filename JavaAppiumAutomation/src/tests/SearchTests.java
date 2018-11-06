@@ -4,8 +4,6 @@ import lib.CoreTestCase;
 import lib.ui.SearchPageObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 public class SearchTests extends CoreTestCase {
 
@@ -53,8 +51,7 @@ public class SearchTests extends CoreTestCase {
     }
 
     @Test
-    public void testEx3SearchCancel() {
-
+    public void testEx3SearchCanceled() {
 
         SearchPageObject SearchPageObject = new SearchPageObject(driver);
         SearchPageObject.initSearchInput();
@@ -63,6 +60,18 @@ public class SearchTests extends CoreTestCase {
         SearchPageObject.assertSomeArticlesFoundAsResultOfSearch();
         SearchPageObject.clickCancelSearch();
         SearchPageObject.assertSearchIsCanceled();
+
+    }
+
+    @Test
+    public void testFindElementByTitleAndDescription (){
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
+        String search_line = "software";
+        SearchPageObject.typeSearchLine(search_line);
+        SearchPageObject.assertElementByTitleAndDescriptionIsDisplayed("Software", "Non-tangible executable component of a computer");
+        SearchPageObject.assertElementByTitleAndDescriptionIsDisplayed("Software testing", "Quality assurance");
+        SearchPageObject.assertElementByTitleAndDescriptionIsDisplayed("Software bug", "Error, flaw, failure, or fault in a computer program or system that produces an incorrect or unexpected result, or causes it to behave in unintended ways");
 
     }
 
