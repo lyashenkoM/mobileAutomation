@@ -23,12 +23,12 @@ public class FirstTest extends CoreTestCase {
     @Test
     public void testex2CreateMethod() {
         MainPageObject.waitForElemenAndClick(
-                By.id("org.wikipedia:id/search_container"),
+                ("org.wikipedia:id/search_container"),
                 "No web element search field",
                 5);
 
         WebElement search_field = MainPageObject.waitForElementPresent(
-                By.id("org.wikipedia:id/search_src_text"),
+                ("org.wikipedia:id/search_src_text"),
                 "No 'Search field' appears",
                 5);
 
@@ -47,18 +47,18 @@ public class FirstTest extends CoreTestCase {
     public void testEx4CheckWordInSearchResult() {
 
         MainPageObject.waitForElemenAndClick(
-                By.id("org.wikipedia:id/search_container"),
+                ("org.wikipedia:id/search_container"),
                 "No web element search field",
                 5);
 
         MainPageObject.waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
+                ("org.wikipedia:id/search_src_text"),
                 "Test",
                 "No Search field to type a value to search",
                 5);
 
         List list = MainPageObject.waitForElementPresentAndSaveToList(
-                By.id("org.wikipedia:id/page_list_item_title"),
+                ("org.wikipedia:id/page_list_item_title"),
                 "No articles corresponded to search!",
                 10);
 

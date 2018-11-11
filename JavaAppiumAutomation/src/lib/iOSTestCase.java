@@ -8,6 +8,7 @@ import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.URL;
+import java.time.Duration;
 
 public class iOSTestCase extends TestCase {   //class jUnit
     protected AppiumDriver driver;
@@ -24,7 +25,7 @@ public class iOSTestCase extends TestCase {   //class jUnit
         capabilities.setCapability("deviceName", "iPhone SE");
         capabilities.setCapability("platformVersion", "12.1");
         capabilities.setCapability("app", "/Users/masha/Desktop/GitHub/mobileAutomation/JavaAppiumAutomation/apks/Wikipedia.app");
-
+       // capabilities.setCapability("networkConnectionEnabled", true);
 
         driver = new IOSDriver(new URL(appiumURL), capabilities);
         this.rotateScreenPortrait();
@@ -49,6 +50,6 @@ public class iOSTestCase extends TestCase {   //class jUnit
     }
 
     protected void backgroundUp(int seconds){
-        driver.runAppInBackground(seconds);
+        driver.runAppInBackground(Duration.ofSeconds(seconds));
     }
 }
