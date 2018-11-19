@@ -2,23 +2,25 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.WebElement;
+import lib.Platform;
 
-public class ArticlePageObject extends MainPageObject {
+abstract public class ArticlePageObject extends MainPageObject {
 
-    private static final String
-    ARTICLE_TITLE = "id:org.wikipedia:id/view_page_title_text",
-    FOOTER_ELEMENT = "xpath://*[@text='View page in browser']",
-    OPTIONS_BUTTON = "xpath://android.widget.ImageView[@content-desc='More options']",
-    OPTIONS_ADD_TO_MY_LIST_BUTTON = "xpath://*[@text='Add to reading list']",
-    ADD_TO_MY_LIST_OVERLAY = "id:org.wikipedia:id/onboarding_button",
-    MY_LIST_NAME_INPUT = "id:org.wikipedia:id/text_input",
-    MY_LIST_OK_BUTTON = "id:android:id/button1",
-    CLOSE_ARTICLE_BUTTON = "xpath://android.widget.ImageButton[@content-desc='Navigate up']",
-    SAVED_FOLDER_TPL = "xpath://*[@resource-id='org.wikipedia:id/item_container']//*[@text='{SUBSTRING}']";
+    protected static String
+            ARTICLE_TITLE,
+            FOOTER_ELEMENT,
+            OPTIONS_BUTTON,
+            OPTIONS_ADD_TO_MY_LIST_BUTTON,
+            ADD_TO_MY_LIST_OVERLAY,
+            MY_LIST_NAME_INPUT,
+            MY_LIST_OK_BUTTON,
+            CLOSE_ARTICLE_BUTTON,
+            SAVED_FOLDER_TPL,
+            CLOSE_BUTTON_SYNC_WINDOW;
 
 
-    public ArticlePageObject (AppiumDriver driver){
-        super (driver);
+    public ArticlePageObject(AppiumDriver driver) {
+        super(driver);
     }
 
     private static String getSavedFolderElememt(String substring) {
@@ -26,24 +28,34 @@ public class ArticlePageObject extends MainPageObject {
     }
 
 
-    public WebElement waitForTitleElement (){
+    public WebElement waitForTitleElement() {
         return this.waitForElementPresent((ARTICLE_TITLE), "Cannot find article title on page", 15);
 
     }
 
-    public String getArticleTitle (){
+    public String getArticleTitle() {
         WebElement title_element = waitForTitleElement();
-        return title_element.getAttribute("text");
+        if (Platform.getInstance().isAndroid()) {
+            return title_element.getAttribute("text");
+        } else {
+            return title_element.getAttribute("name");
+        }
     }
 
-    public void swipeToFooter(){
-        this.swipeUpToFindElement(
-                (FOOTER_ELEMENT),
-                "Cannot find footer element",
-                20);
+    public void swipeToFooter() {
+        if (Platform.getInstance().isAndroid()) {
+
+            this.swipeUpToFindElement(
+                    (FOOTER_ELEMENT),
+                    "Cannot find footer element",
+                    40);
+        } else {
+
+            this.swipeUpToEllementAppear(FOOTER_ELEMENT, "Cannot find the end of  article", 40);
+        }
     }
 
-    public void addArticleToMyList (String name_of_folder){
+    public void addArticleToMyList(String name_of_folder) {
         this.waitForElemenAndClick(
                 (OPTIONS_BUTTON),//by class //
                 "Cannot find button to open article options",
@@ -58,11 +70,11 @@ public class ArticlePageObject extends MainPageObject {
                 5);
 
         this.waitForElementAndClear(
-               (MY_LIST_NAME_INPUT),
+                (MY_LIST_NAME_INPUT),
                 "Cannot find input field for reading list title ",
                 5);
 
-       this.waitForElementAndSendKeys(
+        this.waitForElementAndSendKeys(
                 (MY_LIST_NAME_INPUT),
                 name_of_folder,
                 "Cannot put text into articles folder input",
@@ -73,7 +85,7 @@ public class ArticlePageObject extends MainPageObject {
                 10);
     }
 
-    public void addArticleToSavedList(String substring){
+    public void addArticleToSavedList(String substring) {
         this.waitForElemenAndClick(
                 (OPTIONS_BUTTON),//by class //
                 "Cannot find button to open article options",
@@ -86,12 +98,12 @@ public class ArticlePageObject extends MainPageObject {
 
         this.waitForElemenAndClick(
                 (saved_folder_xpath),
-                "Can not find saved folder " +substring,
+                "Can not find saved folder " + substring,
                 15);
     }
 
 
-    public void closeArticle (){
+    public void closeArticle() {
 
         this.waitForElemenAndClick(
                 (CLOSE_ARTICLE_BUTTON),
@@ -100,9 +112,18 @@ public class ArticlePageObject extends MainPageObject {
 
     }
 
-    public void assertCheckArticleTitleOnPage (){
-       this.assertElementPresent((ARTICLE_TITLE), "There is no title on the page");
+    public void assertCheckArticleTitleOnPage() {
+        this.assertElementPresent((ARTICLE_TITLE), "There is no title on the page");
 
     }
 
+    public void addArticleToMySaved() {
+        this.waitForElemenAndClick(OPTIONS_ADD_TO_MY_LIST_BUTTON, "Cannot find option to add article to my list", 5);
+
+
+    }
+
+    public void closeSyncWindow (){
+        this.waitForElemenAndClick(CLOSE_BUTTON_SYNC_WINDOW, "Cannot find Close button on Sync window", 10);
+    }
 }

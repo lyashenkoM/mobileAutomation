@@ -1,13 +1,14 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
 
 
-public class MyListsPageObject extends  MainPageObject {
+abstract  public class MyListsPageObject extends  MainPageObject {
 
-    private static final String
-            FOLDER_BY_NAME_TPL = "xpath://*[@text='{FOLDER_NAME}']",
-            ARTICLE_BY_TITLE_TPL = "xpath://*[@text='{TITLE}']";
+   protected static String
+            FOLDER_BY_NAME_TPL,
+            ARTICLE_BY_TITLE_TPL;
 
     private static String getFolderXpathByName(String name_of_folder) {
         return FOLDER_BY_NAME_TPL.replace("{FOLDER_NAME}", name_of_folder);
@@ -32,11 +33,11 @@ public class MyListsPageObject extends  MainPageObject {
 
 
     public void waitForArticleToAppearByTitle(String article_title) {
-        String article_xpath = getFolderXpathByName(article_title);
+        String article_xpath = getSavedArticleXpathByTitle(article_title);
 
         this.waitForElementPresent(
                 (article_xpath),
-                "Can not find saved article by title" + article_title,
+                "Can not find saved article by title " + article_title,
                 15);
     }
 
@@ -50,12 +51,16 @@ public class MyListsPageObject extends  MainPageObject {
     }
 
     public void swipeByArticleToDelete(String article_title) {
-        this.waitForArticleToAppearByTitle(article_title);
+      this.waitForArticleToAppearByTitle(article_title);
         String article_xpath = getSavedArticleXpathByTitle(article_title);
+        System.out.println(article_xpath);
         this.swipeElementToLeft(
                 (article_xpath),
                 "Cannot find saved article " + article_title);
 
+        if (Platform.getInstance().isIOS()){
+            this.clickElementToTheRightUpperCorner(article_xpath, "Cannot find saved article in swipe method");
+        }
         this.waitForArticleToDisappearByTitle(article_title);
 
 

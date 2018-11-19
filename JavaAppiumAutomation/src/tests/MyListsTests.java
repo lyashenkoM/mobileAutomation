@@ -1,44 +1,61 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.*;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.MyListsPageObjectFactory;
+import lib.ui.factories.NavigationUIFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
 public class MyListsTests extends CoreTestCase {
+
+    private static final String NAME_OF_FOLDER = "Learning Programming";
+
     @Test
     public void testSaveFirstArticleToMyList() {
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        SearchPageObject.typeSearchLine("iPhone XS");
+        SearchPageObject.clickByArticleWithSubstring("Smartphone produced by Apple inc");
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
         String article_title = ArticlePageObject.getArticleTitle();
-        String name_of_folder = "Learning Programming";
-        ArticlePageObject.addArticleToMyList(name_of_folder);
+        System.out.println(article_title);
+
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.addArticleToMyList(NAME_OF_FOLDER);
+        }
+
+        ArticlePageObject.addArticleToMySaved();
+        ArticlePageObject.closeSyncWindow();
 
         ArticlePageObject.closeArticle();
-        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.clickMyLists();
 
-        MyListsPageObject MyListPageObject = new MyListsPageObject(driver);
-        MyListPageObject.openFolderByName(name_of_folder);
-        MyListPageObject.swipeByArticleToDelete(article_title);
+        MyListsPageObject MyListPageObject = MyListsPageObjectFactory.get(driver);
 
+        if (Platform.getInstance().isAndroid()) {
+            MyListPageObject.openFolderByName(NAME_OF_FOLDER);
+        }
+
+        MyListPageObject.swipeByArticleToDelete(article_title);
 
     }
 
     @Test
     public void testEx5ToSave2Articles() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         String search = "software testing";
         SearchPageObject.typeSearchLine(search);
         SearchPageObject.clickByArticleWithSubstring("Software testing");
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
         String article_title = ArticlePageObject.getArticleTitle();
         String name_of_folder = "My folder";
@@ -51,9 +68,9 @@ public class MyListsTests extends CoreTestCase {
         String second_article_title = ArticlePageObject.getArticleTitle();
         ArticlePageObject.addArticleToSavedList(name_of_folder);
         ArticlePageObject.closeArticle();
-        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.clickMyLists();
-        MyListsPageObject MyListPageObject = new MyListsPageObject(driver);
+        MyListsPageObject MyListPageObject = MyListsPageObjectFactory.get(driver);
         MyListPageObject.openFolderByName(name_of_folder);
         MyListPageObject.swipeByArticleToDelete(article_title);
         MyListPageObject.assertFolderContainsArticle(second_article_title);
