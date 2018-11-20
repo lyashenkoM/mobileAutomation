@@ -4,11 +4,13 @@ import io.appium.java_client.AppiumDriver;
 import lib.Platform;
 
 
-abstract  public class MyListsPageObject extends  MainPageObject {
+abstract public class MyListsPageObject extends MainPageObject {
 
-   protected static String
+    protected static String
             FOLDER_BY_NAME_TPL,
-            ARTICLE_BY_TITLE_TPL;
+            ARTICLE_BY_TITLE_TPL,
+            EMPTY_SAVED_LIST,
+            SAVED_ICON;
 
     private static String getFolderXpathByName(String name_of_folder) {
         return FOLDER_BY_NAME_TPL.replace("{FOLDER_NAME}", name_of_folder);
@@ -42,7 +44,7 @@ abstract  public class MyListsPageObject extends  MainPageObject {
     }
 
     public void waitForArticleToDisappearByTitle(String article_title) {
-        String article_xpath = getFolderXpathByName(article_title);
+        String article_xpath = getSavedArticleXpathByTitle(article_title);
 
         this.waitForElementNotPresent(
                 (article_xpath),
@@ -51,14 +53,16 @@ abstract  public class MyListsPageObject extends  MainPageObject {
     }
 
     public void swipeByArticleToDelete(String article_title) {
-      this.waitForArticleToAppearByTitle(article_title);
+        this.waitForArticleToAppearByTitle(article_title);
         String article_xpath = getSavedArticleXpathByTitle(article_title);
-        System.out.println(article_xpath);
+        //System.out.println(article_xpath);
         this.swipeElementToLeft(
-                (article_xpath),
+                article_xpath,
                 "Cannot find saved article " + article_title);
+        System.out.print(article_title);
 
-        if (Platform.getInstance().isIOS()){
+
+        if (Platform.getInstance().isIOS()) {
             this.clickElementToTheRightUpperCorner(article_xpath, "Cannot find saved article in swipe method");
         }
         this.waitForArticleToDisappearByTitle(article_title);
@@ -72,9 +76,19 @@ abstract  public class MyListsPageObject extends  MainPageObject {
 
     }
 
-    public void clickSavedArticle (String article_title){
+    public void clickSavedArticle(String article_title) {
         String article_title_xpath = getSavedArticleXpathByTitle(article_title);
         this.waitForElemenAndClick((article_title_xpath), "It is impossible to find saved in folder article to click it", 10);
+
+    }
+
+    public void checkEmptySavedListLabel() {
+        this.assertElementNotPresent(EMPTY_SAVED_LIST, "Empty saved list label is present");
+    }
+
+    public void checkSavedIconOnSavedArticle(){
+        this.isElementLocatedOnTheScreen(SAVED_ICON);
+        this.assertElementPresent(SAVED_ICON, "Open article is not saved to the list!");
 
     }
 

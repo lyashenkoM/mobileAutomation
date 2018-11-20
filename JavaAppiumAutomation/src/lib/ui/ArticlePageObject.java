@@ -8,6 +8,7 @@ abstract public class ArticlePageObject extends MainPageObject {
 
     protected static String
             ARTICLE_TITLE,
+            ARTICLE_BY_TITLE_TPL,
             FOOTER_ELEMENT,
             OPTIONS_BUTTON,
             OPTIONS_ADD_TO_MY_LIST_BUTTON,
@@ -25,6 +26,19 @@ abstract public class ArticlePageObject extends MainPageObject {
 
     private static String getSavedFolderElememt(String substring) {
         return SAVED_FOLDER_TPL.replace("{SUBSTRING}", substring);
+    }
+
+    private static String getSavedArticleXpathByTitle(String article_title) {
+        return ARTICLE_BY_TITLE_TPL.replace("{TITLE}", article_title);
+    }
+
+    public void waitForArticleToAppearByTitle(String article_title) {
+        String article_xpath = getSavedArticleXpathByTitle(article_title);
+
+        this.waitForElementPresent(
+                (article_xpath),
+                "Can not find saved article by title " + article_title,
+                15);
     }
 
 
@@ -101,6 +115,8 @@ abstract public class ArticlePageObject extends MainPageObject {
                 "Can not find saved folder " + substring,
                 15);
     }
+
+
 
 
     public void closeArticle() {

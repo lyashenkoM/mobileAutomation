@@ -7,6 +7,7 @@ public class iosArticlePageObject extends ArticlePageObject {
 
     static {
         ARTICLE_TITLE = "id:Smartphone produced by Apple inc";
+        ARTICLE_BY_TITLE_TPL = "id:{TITLE}";
         FOOTER_ELEMENT = "id:View article in browser";
         OPTIONS_ADD_TO_MY_LIST_BUTTON = "xpath://XCUIElementTypeButton[@name='Save for later']";
         CLOSE_ARTICLE_BUTTON = "id:Back";
