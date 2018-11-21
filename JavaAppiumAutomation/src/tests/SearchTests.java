@@ -1,7 +1,9 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,7 +12,7 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testSearch() {
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.waitForSearchResult("Object-oriented programming language");
@@ -20,7 +22,7 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testCancelSearch() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.waitForCancelButtonAndAppear();
         SearchPageObject.clickCancelSearch();
@@ -31,7 +33,7 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testAmountOfNotEmptySearch() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         String search_line = "Linkin Park discography";
         SearchPageObject.typeSearchLine(search_line);
@@ -42,7 +44,7 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testAmountOfEmptySearch() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         String search_line = "zxcvasdfqwer";
         SearchPageObject.typeSearchLine(search_line);
@@ -53,7 +55,7 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testEx3SearchCanceled() {
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         String search_line = "Test";
         SearchPageObject.typeSearchLine(search_line);
@@ -64,16 +66,19 @@ public class SearchTests extends CoreTestCase {
     }
 
     @Test
-    public void testFindElementByTitleAndDescription (){
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+    public void testFindElementByTitleAndDescription() {
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         String search_line = "software";
         SearchPageObject.typeSearchLine(search_line);
-        SearchPageObject.assertElementByTitleAndDescriptionIsDisplayed("Software", "Non-tangible executable component of a computer");
-        SearchPageObject.assertElementByTitleAndDescriptionIsDisplayed("Software testing", "Quality assurance");
-        SearchPageObject.assertElementByTitleAndDescriptionIsDisplayed("Software bug", "Error, flaw, failure, or fault in a computer program or system that produces an incorrect or unexpected result, or causes it to behave in unintended ways");
+            SearchPageObject.assertElementByTitleAndDescriptionIsDisplayed("Software", "Non-tangible executable component of a computer");
+            SearchPageObject.assertElementByTitleAndDescriptionIsDisplayed("Software testing", "Quality assurance");
+            SearchPageObject.assertElementByTitleAndDescriptionIsDisplayed("Software bug", "Error, flaw, failure, or fault in a computer program or system that produces an incorrect or unexpected result, or causes it to behave in unintended ways");
+
+        }
 
     }
 
 
-}
+
+
