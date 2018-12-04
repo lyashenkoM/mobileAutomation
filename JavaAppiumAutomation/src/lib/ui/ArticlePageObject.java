@@ -1,8 +1,12 @@
 package lib.ui;
 
-import io.appium.java_client.AppiumDriver;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import lib.Platform;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 
 abstract public class ArticlePageObject extends MainPageObject {
 
@@ -12,6 +16,7 @@ abstract public class ArticlePageObject extends MainPageObject {
             FOOTER_ELEMENT,
             OPTIONS_BUTTON,
             OPTIONS_ADD_TO_MY_LIST_BUTTON,
+            OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
             ADD_TO_MY_LIST_OVERLAY,
             MY_LIST_NAME_INPUT,
             MY_LIST_OK_BUTTON,
@@ -20,7 +25,7 @@ abstract public class ArticlePageObject extends MainPageObject {
             CLOSE_BUTTON_SYNC_WINDOW;
 
 
-    public ArticlePageObject(AppiumDriver driver) {
+    public ArticlePageObject(RemoteWebDriver driver) {
         super(driver);
     }
 
@@ -51,8 +56,10 @@ abstract public class ArticlePageObject extends MainPageObject {
         WebElement title_element = waitForTitleElement();
         if (Platform.getInstance().isAndroid()) {
             return title_element.getAttribute("text");
-        } else {
+        } else if (Platform.getInstance().isIOS()) {
             return title_element.getAttribute("name");
+        } else {
+            return title_element.getText();
         }
     }
 
@@ -63,9 +70,11 @@ abstract public class ArticlePageObject extends MainPageObject {
                     (FOOTER_ELEMENT),
                     "Cannot find footer element",
                     40);
-        } else {
+        } else if (Platform.getInstance().isIOS()) {
 
             this.swipeUpToEllementAppear(FOOTER_ELEMENT, "Cannot find the end of  article", 40);
+        } else {
+            this.scrollWebPageTillElementNotVisible(FOOTER_ELEMENT, "Cannot fins the end of article", 40);
         }
     }
 
@@ -117,14 +126,17 @@ abstract public class ArticlePageObject extends MainPageObject {
     }
 
 
-
-
     public void closeArticle() {
+        if (Platform.getInstance().isIOS() || Platform.getInstance().isAndroid()){
 
         this.waitForElemenAndClick(
                 (CLOSE_ARTICLE_BUTTON),
                 "Cannot find X button",
                 5);
+        } else{
+            System.out.println("Method closeArticle() does nothing for platform");
+        }
+
 
     }
 
@@ -134,12 +146,40 @@ abstract public class ArticlePageObject extends MainPageObject {
     }
 
     public void addArticleToMySaved() {
-        this.waitForElemenAndClick(OPTIONS_ADD_TO_MY_LIST_BUTTON, "Cannot find option to add article to my list", 5);
+        if (Platform.getInstance().isMW()){
+            this.removeArticleFromSavedIfItAdded();
+        }
+    //    this.waitForElementPresent(OPTIONS_ADD_TO_MY_LIST_BUTTON, "Cannot find option to add article to my list", 5);
 
+      this.waitForElemenAndClick(OPTIONS_ADD_TO_MY_LIST_BUTTON, "Cannot find option to add article to my list", 5);
 
     }
 
-    public void closeSyncWindow (){
+    public void closeSyncWindow() {
         this.waitForElemenAndClick(CLOSE_BUTTON_SYNC_WINDOW, "Cannot find Close button on Sync window", 10);
     }
+
+    public void removeArticleFromSavedIfItAdded() {
+     //  WebDriverWait wait = new WebDriverWait(driver, 10);
+     //  wait.until(ExpectedConditions.stalenessOf(driver.findElementByCssSelector("#page-actions li#ca-watch[title='Stop watching']")));
+        if (this.isElementPresent(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON)) {
+            this.waitForElemenAndClick(
+                    OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
+                    "Cannot click button to remove article",
+                    10);
+
+           this.waitForElementPresent(OPTIONS_ADD_TO_MY_LIST_BUTTON,
+                   "Cannot find button to add an article to saved list after removing it from this list before", 10);
+            System.out.println("I am here");
+        }
+
+    }
+
+    public void checkArticleIsAddedToMyListMW() {
+        this.isElementLocatedOnTheScreen(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON);
+        this.assertElementPresent(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON, "Open article is not saved to the list!");
+
+    }
+
+
 }

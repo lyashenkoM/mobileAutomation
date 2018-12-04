@@ -2,6 +2,9 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 import lib.Platform;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+import static lib.ui.ArticlePageObject.OPTIONS_REMOVE_FROM_MY_LIST_BUTTON;
 
 
 abstract public class MyListsPageObject extends MainPageObject {
@@ -10,7 +13,8 @@ abstract public class MyListsPageObject extends MainPageObject {
             FOLDER_BY_NAME_TPL,
             ARTICLE_BY_TITLE_TPL,
             EMPTY_SAVED_LIST,
-            SAVED_ICON;
+            SAVED_ICON,
+            REMOVE_FROM_SAVED_BUTTON;
 
     private static String getFolderXpathByName(String name_of_folder) {
         return FOLDER_BY_NAME_TPL.replace("{FOLDER_NAME}", name_of_folder);
@@ -20,7 +24,13 @@ abstract public class MyListsPageObject extends MainPageObject {
         return ARTICLE_BY_TITLE_TPL.replace("{TITLE}", article_title);
     }
 
-    public MyListsPageObject(AppiumDriver driver) {
+
+    private static String getRemoveButtonByTitle(String article_title) {
+        return REMOVE_FROM_SAVED_BUTTON.replace("{TITLE}", article_title);
+    }
+
+
+    public MyListsPageObject(RemoteWebDriver driver) {
         super(driver);
     }
 
@@ -55,19 +65,31 @@ abstract public class MyListsPageObject extends MainPageObject {
     public void swipeByArticleToDelete(String article_title) {
         this.waitForArticleToAppearByTitle(article_title);
         String article_xpath = getSavedArticleXpathByTitle(article_title);
-        //System.out.println(article_xpath);
-        this.swipeElementToLeft(
-                article_xpath,
-                "Cannot find saved article " + article_title);
-        System.out.print(article_title);
+        System.out.println(article_xpath);
+        if (Platform.getInstance().isAndroid() || Platform.getInstance().isIOS()) {
+            this.swipeElementToLeft(
+                    article_xpath,
+                    "Cannot find saved article " + article_title);
+        } else {
+            String remove_locator = getRemoveButtonByTitle(article_title);
+            this.waitForElemenAndClick(remove_locator, "Cannot click button to remove article from saved.", 10);
+        }
 
 
         if (Platform.getInstance().isIOS()) {
             this.clickElementToTheRightUpperCorner(article_xpath, "Cannot find saved article in swipe method");
         }
-        this.waitForArticleToDisappearByTitle(article_title);
+
+        if (Platform.getInstance().isMW()) {
+            driver.navigate().refresh();
+
+        }
+
+        if (Platform.getInstance().isIOS() || Platform.getInstance().isAndroid()) {
+            this.waitForArticleToDisappearByTitle(article_title);
 
 
+        }
     }
 
     public void assertFolderContainsArticle(String article_title) {
@@ -86,10 +108,16 @@ abstract public class MyListsPageObject extends MainPageObject {
         this.assertElementNotPresent(EMPTY_SAVED_LIST, "Empty saved list label is present");
     }
 
-    public void checkSavedIconOnSavedArticle(){
+    public void checkSavedIconOnSavedArticle() {
+        if(Platform.getInstance().isIOS()){
         this.isElementLocatedOnTheScreen(SAVED_ICON);
-        this.assertElementPresent(SAVED_ICON, "Open article is not saved to the list!");
+        this.assertElementPresent(SAVED_ICON, "Open article is not saved to the list!");}
+
+        if (Platform.getInstance().isMW()){
+            this.isElementLocatedOnTheScreen(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON);
+            this.assertElementPresent(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON, "Open article is not saved to the list!");
+
+        }
 
     }
-
 }

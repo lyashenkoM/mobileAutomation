@@ -14,14 +14,16 @@ import org.openqa.selenium.By;
 public class MyListsTests extends CoreTestCase {
 
     private static final String NAME_OF_FOLDER = "Learning Programming";
+    private static final String LOGIN = "masha_lyasha";
+    private static final String PASSWORD = "Qwerty@1";
 
     @Test
     public void testSaveFirstArticleToMyList() {
 
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("iPhone XS");
-        SearchPageObject.clickByArticleWithSubstring("Smartphone produced by Apple inc");
+        SearchPageObject.typeSearchLine("Java");
+        SearchPageObject.clickByArticleWithSubstring("bject-oriented programming language");
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
         String article_title = ArticlePageObject.getArticleTitle();
@@ -32,10 +34,26 @@ public class MyListsTests extends CoreTestCase {
         }
 
         ArticlePageObject.addArticleToMySaved();
-        ArticlePageObject.closeSyncWindow();
 
-        ArticlePageObject.closeArticle();
+        if (Platform.getInstance().isMW()) {
+            AuthorizationPageObject Auth = new AuthorizationPageObject(driver);
+            Auth.clickAuthButton();
+            Auth.enterLoginData(LOGIN, PASSWORD);
+            Auth.submitForm();
+            ArticlePageObject.waitForTitleElement();
+
+            assertEquals("We are not on the same page after login", article_title, ArticlePageObject.getArticleTitle());
+            ArticlePageObject.addArticleToMySaved();
+
+        }
+        // ArticlePageObject.closeSyncWindow();
+        if (Platform.getInstance().isIOS() || Platform.getInstance().isAndroid()) {
+            ArticlePageObject.closeArticle();
+        }
+
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+        NavigationUI.openNavigation();
+
         NavigationUI.clickMyLists();
 
         MyListsPageObject MyListPageObject = MyListsPageObjectFactory.get(driver);
@@ -55,46 +73,71 @@ public class MyListsTests extends CoreTestCase {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(search);
-        SearchPageObject.clickByArticleWithSubstring("Smartphone produced by Apple inc");
+        SearchPageObject.clickByArticleWithSubstring("martphone produced by Apple Inc and twelfth generation iPhone");
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
         String article_title = ArticlePageObject.getArticleTitle();
         if (Platform.getInstance().isAndroid()) {
             ArticlePageObject.addArticleToMyList(NAME_OF_FOLDER);
-        } else {
-            ArticlePageObject.addArticleToMySaved();
+        }
+        ArticlePageObject.addArticleToMySaved();
+
+        if (Platform.getInstance().isIOS()) {
             ArticlePageObject.closeSyncWindow();
+        } else {
+            AuthorizationPageObject Auth = new AuthorizationPageObject(driver);
+            Auth.clickAuthButton();
+            Auth.enterLoginData(LOGIN, PASSWORD);
+            Auth.submitForm();
+            ArticlePageObject.waitForTitleElement();
+
+            assertEquals("We are not on the same page after login", article_title, ArticlePageObject.getArticleTitle());
+            ArticlePageObject.addArticleToMySaved();
         }
 
-        ArticlePageObject.closeArticle();
+        if (Platform.getInstance().isIOS() || Platform.getInstance().isAndroid()) {
+            ArticlePageObject.closeArticle();
+        }
+
         SearchPageObject.initSearchInput();
 
         if (Platform.getInstance().isAndroid()) {
             SearchPageObject.clickRecentSearch(search);
         }
-        SearchPageObject.clickByArticleWithSubstring("Line of smartphones designed and marketed by Apple Inc.");
-        if (Platform.getInstance().isAndroid()) {
+
+        if (Platform.getInstance().isMW()) {
+            SearchPageObject.typeSearchLine(search);
+        }
+
+        SearchPageObject.clickByArticleWithSubstring("ine of smartphones designed and marketed by Apple Inc.");
+
+        if (Platform.getInstance().isAndroid() || Platform.getInstance().isMW()) {
             ArticlePageObject.waitForTitleElement();
         } else {
-            ArticlePageObject.waitForArticleToAppearByTitle("Line of smartphones designed and marketed by Apple Inc.");
+            ArticlePageObject.waitForArticleToAppearByTitle("ine of smartphones designed and marketed by Apple Inc.");
         }
         if (Platform.getInstance().isAndroid()) {
             String second_article_title = ArticlePageObject.getArticleTitle();
             ArticlePageObject.addArticleToSavedList(NAME_OF_FOLDER);
-        } else {
-            ArticlePageObject.addArticleToMySaved();
         }
 
-        ArticlePageObject.closeArticle();
+        ArticlePageObject.addArticleToMySaved();
+
+
+        if (Platform.getInstance().isIOS() || Platform.getInstance().isAndroid()) {
+            ArticlePageObject.closeArticle();
+        }
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         MyListsPageObject MyListPageObject = MyListsPageObjectFactory.get(driver);
+        NavigationUI.openNavigation();
         NavigationUI.clickMyLists();
+
+
         if (Platform.getInstance().isAndroid()) {
             MyListPageObject.openFolderByName(NAME_OF_FOLDER);
         }
-        MyListPageObject.swipeByArticleToDelete(article_title);
-        MyListPageObject.checkEmptySavedListLabel();
-        MyListPageObject.clickSavedArticle("Line of smartphones designed and marketed by Apple Inc.");
+        MyListPageObject.swipeByArticleToDelete("Phone XS");
+        MyListPageObject.clickSavedArticle("Phone");
 
         if (Platform.getInstance().isAndroid()) {
             String second_article_title = ArticlePageObject.getArticleTitle();
@@ -104,7 +147,7 @@ public class MyListsTests extends CoreTestCase {
                     "Software testing controversies",
                     second_article_title);
         } else {
-        MyListPageObject.checkSavedIconOnSavedArticle();}
+            MyListPageObject.checkSavedIconOnSavedArticle();
 
-    }
+    }}
 }
